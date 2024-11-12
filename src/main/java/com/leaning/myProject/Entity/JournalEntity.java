@@ -1,17 +1,22 @@
-package com.leaning.myProject.Model;
+package com.leaning.myProject.Entity;
 
 import org.bson.types.ObjectId;
-import org.springframework.stereotype.Component;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class JournalModel {
+@Document(collection="journals")
+public class JournalEntity {
 
+	@Id
 	private ObjectId id;
-	
 	private String title;
-	
 	private String content;
-
+	
 	
 	public ObjectId getId() {
 		return id;
@@ -43,8 +48,10 @@ public class JournalModel {
 	}
 
 
-	public JournalModel() {
+	public JournalEntity() {
+		
 	}
+	
 	
 	
 }
