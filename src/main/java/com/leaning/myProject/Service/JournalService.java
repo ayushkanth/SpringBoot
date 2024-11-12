@@ -37,6 +37,7 @@ public class JournalService {
 	public JournalModel postJournal(JournalModel journalModel)
 	{
 		JournalEntity journalEntity = new JournalEntity();
+		journalEntity.setId(journalModel.getId());
 		  journalEntity.setTitle(journalModel.getTitle());
 		  journalEntity.setContent(journalModel.getContent());
 
