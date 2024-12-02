@@ -1,16 +1,13 @@
 package com.leaning.myProject.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import com.leaning.myProject.Entity.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.leaning.myProject.Entity.JournalEntity;
-import com.leaning.myProject.Model.JournalModel;
 import com.leaning.myProject.Repo.JournalRepo;
 
 @Service
@@ -18,50 +15,49 @@ public class JournalService {
 
 	@Autowired
 	private JournalRepo journalRepo;
-	
-	public List<JournalModel> getAll()
-	{
-		List<JournalEntity> list=journalRepo.findAll();
-		List<JournalModel> modelList = new ArrayList<>();
-		for(JournalEntity i: list)
-		{
-			JournalModel journalModel = new JournalModel();
-			journalModel.setId(i.getId());
-			journalModel.setContent(i.getContent());
-			journalModel.setTitle(i.getTitle());
-			modelList.add(journalModel);
-		}
-		return modelList;
-	}
-	
-	public JournalModel postJournal(JournalModel journalModel)
-	{
-		JournalEntity journalEntity = new JournalEntity();
-		journalEntity.setId(journalModel.getId());
-		  journalEntity.setTitle(journalModel.getTitle());
-		  journalEntity.setContent(journalModel.getContent());
 
-		journalRepo.save(journalEntity);
-		return journalModel;
-	
-//		journalRepo.save(journalEntity);
-	}
-	
-	public JournalModel getByID(ObjectId id)
+	@Autowired
+	UserService userService;
+
+	public List<JournalEntity> getAll()
 	{
-		Optional<JournalEntity> o= journalRepo.findById(id);
-		if(o.isPresent()) {
-			JournalEntity je = o.get();
-			JournalModel jm = new JournalModel();
-			  jm.setId(je.getId());
-			  jm.setTitle(je.getTitle());
-			  jm.setContent(je.getContent());
-			return jm;
-		}
+//		List<JournalEntity> list=journalRepo.findAll();
+//		List<JournalModel> modelList = new ArrayList<>();
+//		for(JournalEntity i: list)
+//		{
+//			JournalModel journalModel = new JournalModel();
+//			journalModel.setId(i.getId());
+//			journalModel.setContent(i.getContent());
+//			journalModel.setTitle(i.getTitle());
+//			modelList.add(journalModel);
+//		}
 		return null;
 	}
+	
+	public void postJournal(JournalEntity journalEntity, String userName)
+	{
+		User user = userService.findByUserName(userName);
+		JournalEntity saved = journalRepo.save(journalEntity);
+		user.getJournalEntityList().add(saved);
+		userService.saveEntry(user);
+	}
 
-	public void deleteByID(ObjectId id) {
+	public void postJournal(JournalEntity journalEntity)
+	{
+		journalRepo.save(journalEntity);
+	}
+	
+	public JournalEntity getByID(ObjectId id)
+	{
+		Optional<JournalEntity> o= journalRepo.findById(id);
+
+		return o.get();
+	}
+
+	public void deleteByID(ObjectId id, String userName) {
+		User byUserName = userService.findByUserName(userName);
+		byUserName.getJournalEntityList().removeIf(x->x.getId().equals(id));
+		userService.saveEntry(byUserName);
 		journalRepo.deleteById(id);
 	}
 	
