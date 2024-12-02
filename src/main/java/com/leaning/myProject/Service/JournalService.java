@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.leaning.myProject.Entity.JournalEntity;
 import com.leaning.myProject.Repo.JournalRepo;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class JournalService {
@@ -33,7 +34,8 @@ public class JournalService {
 //		}
 		return null;
 	}
-	
+
+	@Transactional
 	public void postJournal(JournalEntity journalEntity, String userName)
 	{
 		User user = userService.findByUserName(userName);
